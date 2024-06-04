@@ -96,6 +96,11 @@ public class MovementServiceImpl implements MovementService {
               .switchIfEmpty(Mono.defer(() -> Mono.error(ACC0009.getException())))
               .flatMap(existingMovement -> {
                 MovementMapper.INSTANCE.updateMovementRequestToMovement(request, existingMovement);
+                if (existingMovement.getAccountId() != null) {
+                  return accountRepository.findById(existingMovement.getAccountId())
+                      .switchIfEmpty(Mono.defer(() -> Mono.error(ACC0001.getException())))
+                      .then(movementRepository.save(existingMovement));
+                }
                 return movementRepository.save(existingMovement);
               })
               .flatMap(updatedMovement -> Mono.justOrEmpty(updatedMovement.getAccountId())
