@@ -1,6 +1,6 @@
 spring:
   r2dbc:
-    url: r2dbc:mysql://localhost:3306/devsudb?tlsVersion=TLSv1.2
+    url: r2dbc:mysql://devsu-mysql-1:3306/devsudb?tlsVersion=TLSv1.2
     username: root
     password: root
     options:
@@ -13,7 +13,7 @@ spring:
   main:
     web-application-type: reactive
 microservices:
-  business-client-management-service-v1: http://localhost:8080
+  business-client-management-service-v1: http://devsu-microservice1-1:8080
 server:
   error:
     include-stacktrace: never
