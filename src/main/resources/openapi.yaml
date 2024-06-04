@@ -749,28 +749,30 @@ components:
                     example: 'Deposito de 55.75'
                     description: Detalle del movimiento
         ReportResponse:
-            allOf:
-                - $ref: '#/components/schemas/accountInformation'
-            properties:
-                clientName:
-                    type: string
-                    description: Nombre del cliente.
-                    example: 'Marianela Montalvo'
-                processDate:
-                    type: string
-                    format: date
-                    description: Fecha y hora del movimiento
-                    example: '2024-06-03T12:30:45Z'
-                amount:
-                    type: number
-                    format: double
-                    description: Monto del movimiento
-                    example: 55.56
-                availableBalance:
-                    type: number
-                    format: double
-                    description: Saldo disponible
-                    example: 3587.43
+            type: array
+            items:
+                allOf:
+                    - $ref: '#/components/schemas/accountInformation'
+                properties:
+                    clientName:
+                        type: string
+                        description: Nombre del cliente.
+                        example: 'Marianela Montalvo'
+                    processDate:
+                        type: string
+                        format: date
+                        description: Fecha y hora del movimiento
+                        example: '2024-06-03T12:30:45Z'
+                    amount:
+                        type: number
+                        format: double
+                        description: Monto del movimiento
+                        example: 55.56
+                    availableBalance:
+                        type: number
+                        format: double
+                        description: Saldo disponible
+                        example: 3587.43
         ApiException:
             title: ApiException
             type: object

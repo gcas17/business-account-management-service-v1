@@ -29,7 +29,7 @@ public class Account {
   private BigDecimal initialBalance;
 
   @Column("status")
-  private String status;
+  private Boolean status;
 
   @Column("client_id")
   private Long clientId;
