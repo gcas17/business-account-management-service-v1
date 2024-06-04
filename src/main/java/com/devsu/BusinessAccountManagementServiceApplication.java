@@ -1,4 +1,4 @@
-package com.devsu.business_account_management_service;
+package com.devsu;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

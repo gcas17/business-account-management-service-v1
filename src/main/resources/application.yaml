@@ -1,0 +1,20 @@
+spring:
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/devsudb?tlsVersion=TLSv1.2
+    username: root
+    password: root
+    options:
+      connectTimeout: 30000ms
+      ssl: false
+  kafka:
+    bootstrap-servers: kafka:9092
+  application:
+    name: business-account-management-service
+  main:
+    web-application-type: reactive
+microservices:
+  business-client-management-service-v1: http://localhost:8080
+server:
+  error:
+    include-stacktrace: never
+  port: 8082

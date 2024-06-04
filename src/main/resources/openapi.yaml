@@ -1,3 +1,807 @@
-  openapi:
-    info:
-  webhooks:
+openapi: 3.0.0
+info:
+    title: MS BS Account Management Service V1
+    version: 1.0.0
+servers:
+    - url: /
+      description: Servicio de gestión de cuentas
+      variables:
+          host:
+              default: localhost
+              description: Host de la aplicación
+          port:
+              default: '8081'
+              description: Puerto de la aplicación
+paths:
+    /cuentas:
+        get:
+            operationId: listAccounts
+            summary: Listar cuentas
+            tags:
+                - Account
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite listar las cuentas registradas.
+            responses:
+                '200':
+                    description: Operación exitosa.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/AccountResponse'
+                '204':
+                    description: Sin datos para retornar.
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+        post:
+            operationId: createAccount
+            summary: Crear una cuenta nueva.
+            tags:
+                - Account
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite registrar una nueva cuenta.
+            requestBody:
+                description: Entrada del servicio.
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateAccountRequest'
+            responses:
+                '201':
+                    description: Cuenta creada.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AccountResponse'
+                '204':
+                    description: Sin datos para retornar.
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+        put:
+            operationId: replaceAccount
+            summary: Actualizar cuenta
+            tags:
+                - Account
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite actualizar una cuenta.
+            requestBody:
+                description: Entrada del servicio.
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ReplaceAccountRequest'
+            responses:
+                '200':
+                    description: Cuenta actualizada.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AccountResponse'
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+        patch:
+            operationId: updateAccount
+            summary: Actualizar cuenta de forma parcial
+            tags:
+                - Account
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite actualizar de forma parcial una cuenta.
+            requestBody:
+                description: Entrada del servicio.
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateAccountRequest'
+            responses:
+                '200':
+                    description: Cuenta actualizada.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AccountResponse'
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+    /cuentas/{id}:
+        get:
+            operationId: getAccount
+            summary: Consultar una cuenta
+            tags:
+                - Account
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite obtener una cuenta por su identificador.
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                '200':
+                    description: Operación exitosa.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AccountResponse'
+                '204':
+                    description: Sin datos para retornar.
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+        delete:
+            operationId: deleteAccount
+            summary: Eliminar una cuenta por su identificador.
+            tags:
+                - Account
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite eliminar una cuenta por su identificador.
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                '200':
+                    description: Cuenta eliminada.
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+    /movimientos:
+        get:
+            operationId: listMovements
+            summary: Listar movimientos
+            tags:
+                - Movement
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite listar las movimientos registrados.
+            responses:
+                '200':
+                    description: Operación exitosa.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/MovementResponse'
+                '204':
+                    description: Sin datos para retornar.
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+        post:
+            operationId: createMovement
+            summary: Crear una movimiento nuevo.
+            tags:
+                - Movement
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite registrar una nuevo movimiento.
+            requestBody:
+                description: Entrada del servicio.
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateMovementRequest'
+            responses:
+                '201':
+                    description: Movimiento creado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MovementResponse'
+                '204':
+                    description: Sin datos para retornar.
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+        put:
+            operationId: replaceMovement
+            summary: Actualizar movimiento
+            tags:
+                - Movement
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite actualizar una movimiento.
+            requestBody:
+                description: Entrada del servicio.
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ReplaceMovementRequest'
+            responses:
+                '200':
+                    description: Movimiento actualizado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MovementResponse'
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+        patch:
+            operationId: updateMovement
+            summary: Actualizar movimiento de forma parcial
+            tags:
+                - Movement
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite actualizar de forma parcial una movimiento.
+            requestBody:
+                description: Entrada del servicio.
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateMovementRequest'
+            responses:
+                '200':
+                    description: Movimiento actualizado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MovementResponse'
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+    /movimientos/{id}:
+        get:
+            operationId: getMovement
+            summary: Consultar una movimiento
+            tags:
+                - Movement
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite obtener una movimiento por su identificador.
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                '200':
+                    description: Operación exitosa.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MovementResponse'
+                '204':
+                    description: Sin datos para retornar.
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+        delete:
+            operationId: deleteMovement
+            summary: Eliminar una movimiento por su identificador.
+            tags:
+                - Movement
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite eliminar una movimiento por su identificador.
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                '200':
+                    description: Movimiento eliminado.
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+    /reportes:
+        get:
+            operationId: generateReport
+            summary: Generar reporte de estado de cuentas y movimientos.
+            tags:
+                - Report
+            description: |-
+                ### Acerca de la funcionalidad expuesta
+                Permite generar un reporte de estado de cuentas y movimientos.
+            parameters:
+                - name: from
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+                      format: date
+                - name: to
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+                      format: date
+                - name: clientId
+                  in: query
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                '200':
+                    description: Operación exitosa.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ReportResponse'
+                '204':
+                    description: Sin datos para retornar.
+                '400':
+                    description: Los datos proporcionados no son válidos.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '404':
+                    description: Recurso no encontrado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '500':
+                    description: Ocurrió un error inesperado.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+                '503':
+                    description: Servicio no se encuentra disponible.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ApiException'
+components:
+    schemas:
+        CreateAccountRequest:
+            required:
+                - accountInformation
+                - initialBalance
+                - status
+            allOf:
+                - $ref: '#/components/schemas/AccountRequest'
+        ReplaceAccountRequest:
+            required:
+                - id
+                - accountInformation
+                - initialBalance
+                - status
+            allOf:
+                - $ref: '#/components/schemas/AccountRequest'
+        UpdateAccountRequest:
+            required:
+                - id
+            allOf:
+                - $ref: '#/components/schemas/AccountRequest'
+        AccountRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                    description: Identificador de la cuenta.
+                    example: 1
+                accountInformation:
+                    $ref: '#/components/schemas/accountInformation'
+                clientId:
+                    type: integer
+                    format: int64
+                    description: Identificador del cliente.
+                    example: 1
+        AccountResponse:
+            type: object
+            properties:
+                accountInformation:
+                    $ref: '#/components/schemas/accountInformation'
+                clientName:
+                    type: string
+                    description: Nombre del cliente.
+                    example: 'Marianela Montalvo'
+        CreateMovementRequest:
+            required:
+                - processDate
+                - movementType
+                - amount
+                - availableBalance
+            allOf:
+                - $ref: '#/components/schemas/MovementRequest'
+        ReplaceMovementRequest:
+            required:
+                - id
+                - processDate
+                - movementType
+                - amount
+                - availableBalance
+            allOf:
+                - $ref: '#/components/schemas/MovementRequest'
+        UpdateMovementRequest:
+            required:
+                - id
+            allOf:
+                - $ref: '#/components/schemas/MovementRequest'
+        MovementRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                    description: Identificador de la cuenta.
+                    example: 1
+                processDate:
+                    type: string
+                    format: date
+                    description: Fecha y hora del movimiento
+                movementType:
+                    type: string
+                    example: 'DEPOSITO'
+                    description: |
+                        The type of transaction. Possible values are:
+                        - DEPOSITO: Dinero depositado en la cuenta.
+                        - RETIRO: Retiro de dinero en la cuenta.
+                        - TRANSFERENCIA: Dinero transferido entre cuentas.
+                        - PAGO: Pagos realizados desde la cuenta.
+                        - REEMBOLSO: Reembolso de una transacción anterior.
+                    pattern: '^(DEPOSITO|RETIRO|TRANSFERENCIA|PAGO|REEMBOLSO)$'
+                amount:
+                    type: number
+                    format: double
+                    description: Monto del movimiento
+                    example: 55.56
+                availableBalance:
+                    type: number
+                    format: double
+                    description: Saldo disponible
+                    example: 3587.43
+                accountId:
+                    type: integer
+                    format: int64
+                    description: Identificador de la cuenta.
+                    example: 1
+        MovementResponse:
+            type: object
+            properties:
+                accountInformation:
+                    $ref: '#/components/schemas/accountInformation'
+                movementDetail:
+                    type: string
+                    example: 'Deposito de 55.75'
+                    description: Detalle del movimiento
+        ReportResponse:
+            type: object
+            properties:
+                clientInformation:
+                    type: object
+                    properties:
+                        name:
+                            type: string
+                            description: Nombre del cliente.
+                            example: 'Marianela Montalvo'
+                movementInformation:
+                    type: object
+                    properties:
+                        processDate:
+                            type: string
+                            format: date
+                            description: Fecha y hora del movimiento
+                            example: '2024-06-03T12:30:45Z'
+                        amount:
+                            type: number
+                            format: double
+                            description: Monto del movimiento
+                            example: 55.56
+                        availableBalance:
+                            type: number
+                            format: double
+                            description: Saldo disponible
+                            example: 3587.43
+                accountInformation:
+                    $ref: '#/components/schemas/accountInformation'
+        ApiException:
+            title: ApiException
+            type: object
+            properties:
+                code:
+                    type: string
+                    description: Codigo de error de sistema
+                    example: ACC0001
+                description:
+                    type: string
+                    description: Descripción del error de sistema
+                    example: Recurso no encontrado
+        accountInformation:
+            type: object
+            required:
+                - number
+                - type
+            properties:
+                number:
+                    type: string
+                    description: Número de cuenta
+                    example: 193-12831974-0
+                type:
+                    type: string
+                    example: 'CORRIENTE'
+                    pattern: '^(AHORRO|CORRIENTE|PLANILLA|INVERSION||DEPOSITO_FIJO)$'
+                    description: >
+                        Tipo de cuenta bancaria. Valores permitidos:
+                        - AHORROS: Cuenta de Ahorros
+                        - CORRIENTE: Cuenta Corriente
+                        - PLANILLA: Cuenta de Nómina
+                        - INVERSION: Cuenta de Inversión
+                        - DEPOSITO_FIJO: Cuenta de Depósito a Plazo Fijo
+                initialBalance:
+                    type: number
+                    format: double
+                    description: Saldo inicial
+                    example: 3587.43
+                status:
+                    type: boolean
+                    description: Estado
+                    example: true
