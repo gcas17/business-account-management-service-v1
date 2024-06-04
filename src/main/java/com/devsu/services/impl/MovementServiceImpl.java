@@ -1,6 +1,5 @@
 package com.devsu.services.impl;
 
-import com.devsu.mappers.AccountMapper;
 import com.devsu.mappers.MovementMapper;
 import com.devsu.model.entities.Account;
 import com.devsu.model.entities.Movement;
@@ -37,6 +36,7 @@ public class MovementServiceImpl implements MovementService {
           }
           Movement movement = MovementMapper.INSTANCE.createMovementRequestToMovement(request);
           return accountRepository.findById(request.getAccountId())
+              .switchIfEmpty(Mono.error(ACC0001.getException()))
               .map(account -> Tuples.of(account, movement));
         })
         .flatMap(accountMovementPair -> {
@@ -59,6 +59,7 @@ public class MovementServiceImpl implements MovementService {
   public Mono<MovementResponse> getMovement(Long id) {
     return movementRepository.findById(id)
         .flatMap(movement -> accountRepository.findById(movement.getAccountId())
+            .switchIfEmpty(Mono.error(ACC0001.getException()))
             .map(account -> MovementMapper.INSTANCE.movementToMovementResponse(movement, account)));
   }
 
@@ -71,13 +72,16 @@ public class MovementServiceImpl implements MovementService {
           }
           return movementRepository.findById(request.getId())
               .switchIfEmpty(Mono.defer(() -> Mono.error(ACC0009.getException())))
-              .flatMap(existingMovement -> {
-                Movement updatedMovement = MovementMapper.INSTANCE.replaceMovementRequestToMovement(request);
-                updatedMovement.setId(existingMovement.getId());
-                return movementRepository.save(updatedMovement);
-              })
-              .flatMap(updatedMovement -> accountRepository.findById(updatedMovement.getAccountId())
-                  .map(account -> MovementMapper.INSTANCE.movementToMovementResponse(updatedMovement, account)));
+              .flatMap(existingMovement -> accountRepository.findById(request.getAccountId())
+                  .switchIfEmpty(Mono.defer(() -> Mono.error(ACC0001.getException())))
+                  .flatMap(account -> {
+                    Movement updatedMovement = MovementMapper.INSTANCE.replaceMovementRequestToMovement(request);
+                    updatedMovement.setId(existingMovement.getId());
+                    return movementRepository.save(updatedMovement);
+                  })
+                  .flatMap(updatedMovement -> accountRepository.findById(updatedMovement.getAccountId())
+                      .switchIfEmpty(Mono.error(ACC0001.getException()))
+                      .map(account -> MovementMapper.INSTANCE.movementToMovementResponse(updatedMovement, account))));
         });
   }
 
@@ -94,8 +98,11 @@ public class MovementServiceImpl implements MovementService {
                 MovementMapper.INSTANCE.updateMovementRequestToMovement(request, existingMovement);
                 return movementRepository.save(existingMovement);
               })
-              .flatMap(updatedMovement -> accountRepository.findById(updatedMovement.getAccountId())
-                  .map(account -> MovementMapper.INSTANCE.movementToMovementResponse(updatedMovement, account)));
+              .flatMap(updatedMovement -> Mono.justOrEmpty(updatedMovement.getAccountId())
+                  .flatMap(accountRepository::findById)
+                  .switchIfEmpty(Mono.error(ACC0001.getException()))
+                  .map(account -> MovementMapper.INSTANCE.movementToMovementResponse(updatedMovement, account))
+                  .defaultIfEmpty(MovementMapper.INSTANCE.movementToMovementResponse(updatedMovement, null)));
         });
   }
 
@@ -103,6 +110,7 @@ public class MovementServiceImpl implements MovementService {
   public Flux<MovementResponse> listMovements() {
     return movementRepository.findAll()
         .flatMap(movement -> accountRepository.findById(movement.getAccountId())
+            .switchIfEmpty(Mono.error(ACC0001.getException()))
             .map(account -> MovementMapper.INSTANCE.movementToMovementResponse(movement, account)));
   }
 
@@ -116,7 +124,6 @@ public class MovementServiceImpl implements MovementService {
         replaceClientRequest.getProcessDate() != null &&
         replaceClientRequest.getMovementType() != null &&
         replaceClientRequest.getAmount() != null &&
-        replaceClientRequest.getAvailableBalance() != null &&
         replaceClientRequest.getAccountId() != null;
   }
 
@@ -124,7 +131,6 @@ public class MovementServiceImpl implements MovementService {
     return createClientRequest -> createClientRequest.getProcessDate() != null &&
         createClientRequest.getMovementType() != null &&
         createClientRequest.getAmount() != null &&
-        createClientRequest.getAvailableBalance() != null &&
         createClientRequest.getAccountId() != null;
   }
 

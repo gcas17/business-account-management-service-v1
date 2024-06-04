@@ -67,10 +67,14 @@ public class AccountServiceImpl implements AccountService {
           return accountRepository.findById(request.getId())
               .switchIfEmpty(Mono.error(ACC0001.getException()))
               .flatMap(existingAccount -> {
-                Account updatedAccount = AccountMapper.INSTANCE.updateAccountRequestToAccount(request);
-                updatedAccount.setId(existingAccount.getId());
-                updatedAccount.setClientId(existingAccount.getClientId());
-                return accountRepository.save(updatedAccount);
+                AccountMapper.INSTANCE.updateAccountRequestToAccount(request, existingAccount);
+                if (request.getClientId() != null) {
+                  return clientServiceClient.getClientById(request.getClientId())
+                      .switchIfEmpty(Mono.error(ACC0002.getException()))
+                      .doOnNext(client -> existingAccount.setClientId(client.getId()))
+                      .then(accountRepository.save(existingAccount));
+                }
+                return accountRepository.save(existingAccount);
               })
               .flatMap(updatedAccount -> clientServiceClient.getClientById(updatedAccount.getClientId())
                   .map(client -> AccountMapper.INSTANCE.accountToAccountResponse(updatedAccount, client)));
@@ -84,16 +88,17 @@ public class AccountServiceImpl implements AccountService {
           if (!validateReplaceAccountRequest().test(request)) {
             return Mono.error(ACC0004.getException());
           }
-          return accountRepository.findById(request.getId())
-              .switchIfEmpty(Mono.error(ACC0001.getException()))
-              .flatMap(existingAccount -> {
-                Account updatedAccount = AccountMapper.INSTANCE.replaceAccountRequestToAccount(request);
-                updatedAccount.setId(existingAccount.getId());
-                updatedAccount.setClientId(existingAccount.getClientId());
-                return accountRepository.save(updatedAccount);
-              })
-              .flatMap(updatedAccount -> clientServiceClient.getClientById(updatedAccount.getClientId())
-                  .map(client -> AccountMapper.INSTANCE.accountToAccountResponse(updatedAccount, client)));
+          return clientServiceClient.getClientById(request.getClientId())
+              .switchIfEmpty(Mono.error(ACC0002.getException()))
+              .flatMap(client -> accountRepository.findById(request.getId())
+                  .switchIfEmpty(Mono.error(ACC0001.getException()))
+                  .flatMap(existingAccount -> {
+                    Account updatedAccount = AccountMapper.INSTANCE.replaceAccountRequestToAccount(request);
+                    updatedAccount.setId(existingAccount.getId());
+                    updatedAccount.setClientId(client.getId());
+                    return accountRepository.save(updatedAccount);
+                  })
+                  .flatMap(updatedAccount -> Mono.just(AccountMapper.INSTANCE.accountToAccountResponse(updatedAccount, client))));
         });
   }
 
@@ -110,20 +115,18 @@ public class AccountServiceImpl implements AccountService {
 
   private Predicate<ReplaceAccountRequest> validateReplaceAccountRequest() {
     return replaceAccountRequest -> replaceAccountRequest.getId() != null &&
-        replaceAccountRequest.getAccountInformation() != null &&
-        replaceAccountRequest.getAccountInformation().getStatus() != null &&
-        replaceAccountRequest.getAccountInformation().getType() != null &&
-        replaceAccountRequest.getAccountInformation().getNumber() != null &&
-        replaceAccountRequest.getAccountInformation().getInitialBalance() != null &&
+        replaceAccountRequest.getStatus() != null &&
+        replaceAccountRequest.getAccountType() != null &&
+        replaceAccountRequest.getAccountNumber() != null &&
+        replaceAccountRequest.getInitialBalance() != null &&
         replaceAccountRequest.getClientId() != null;
   }
 
   private Predicate<CreateAccountRequest> validateCreateAccountRequest() {
-    return createAccountRequest -> createAccountRequest.getAccountInformation() != null &&
-        createAccountRequest.getAccountInformation().getStatus() != null &&
-        createAccountRequest.getAccountInformation().getType() != null &&
-        createAccountRequest.getAccountInformation().getNumber() != null &&
-        createAccountRequest.getAccountInformation().getInitialBalance() != null &&
+    return createAccountRequest -> createAccountRequest.getStatus() != null &&
+        createAccountRequest.getAccountType() != null &&
+        createAccountRequest.getAccountNumber() != null &&
+        createAccountRequest.getInitialBalance() != null &&
         createAccountRequest.getClientId() != null;
   }
 

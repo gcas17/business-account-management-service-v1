@@ -2,10 +2,7 @@ package com.devsu.mappers;
 
 import com.devsu.model.entities.Account;
 import com.devsu.model.entities.Movement;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.model.CreateMovementRequest;
 import org.openapitools.model.MovementResponse;
@@ -20,7 +17,6 @@ public interface MovementMapper {
   @Mapping(source = "processDate", target = "date")
   @Mapping(source = "movementType", target = "movementType")
   @Mapping(source = "amount", target = "value")
-  @Mapping(source = "availableBalance", target = "balance")
   @Mapping(target = "accountId", ignore = true)
   Movement createMovementRequestToMovement(CreateMovementRequest createMovementRequest);
 
@@ -28,21 +24,21 @@ public interface MovementMapper {
   @Mapping(source = "processDate", target = "date")
   @Mapping(source = "movementType", target = "movementType")
   @Mapping(source = "amount", target = "value")
-  @Mapping(source = "availableBalance", target = "balance")
-  @Mapping(target = "accountId", ignore = true)
+  @Mapping(source = "accountId", target = "accountId")
   Movement replaceMovementRequestToMovement(ReplaceMovementRequest replaceMovementRequest);
 
-  @Mapping(source = "account.accountNumber", target = "accountInformation.number")
-  @Mapping(source = "account.accountType", target = "accountInformation.type")
-  @Mapping(source = "account.initialBalance", target = "accountInformation.initialBalance")
-  @Mapping(source = "account.status", target = "accountInformation.status")
+  @Mapping(source = "movement.id", target = "id")
+  @Mapping(source = "account.accountNumber", target = "accountNumber")
+  @Mapping(source = "account.accountType", target = "accountType")
+  @Mapping(source = "account.initialBalance", target = "initialBalance")
+  @Mapping(source = "account.status", target = "status")
   @Mapping(target = "movementDetail", expression = "java(formatMovementDetail(movement))")
   MovementResponse movementToMovementResponse(Movement movement, Account account);
 
   @Mapping(source = "processDate", target = "date")
   @Mapping(source = "movementType", target = "movementType")
   @Mapping(source = "amount", target = "value")
-  @Mapping(source = "availableBalance", target = "balance")
+  @Mapping(source = "accountId", target = "accountId")
   void updateMovementRequestToMovement(UpdateMovementRequest updateMovementRequest, @MappingTarget Movement movement);
 
   default String formatMovementDetail(Movement movement) {

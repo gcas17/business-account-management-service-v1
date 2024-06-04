@@ -16,11 +16,11 @@ public enum ApiException {
   ACC0001("ACC0001", "Cuenta no encontrada", BAD_REQUEST),
   ACC0002("ACC0002", "Cliente no encontrado", BAD_REQUEST),
   ACC0003("ACC0003", "Campos obligatorios: id", BAD_REQUEST),
-  ACC0004("ACC0004", "Campos obligatorios: id, number, type, initialBalance, status, clientId", BAD_REQUEST),
-  ACC0005("ACC0005", "Campos obligatorios: number, type, initialBalance, status, clientId", BAD_REQUEST),
+  ACC0004("ACC0004", "Campos obligatorios: id, accountNumber, accountType, initialBalance, status, clientId", BAD_REQUEST),
+  ACC0005("ACC0005", "Campos obligatorios: accountNumber, accountType, initialBalance, status, clientId", BAD_REQUEST),
   ACC0006("ACC0006", "Campos obligatorios: id", BAD_REQUEST),
-  ACC0007("ACC0007", "Campos obligatorios: id, processDate, movementType, amount, availableBalance, accountId", BAD_REQUEST),
-  ACC0008("ACC0008", "Campos obligatorios: processDate, movementType, amount, availableBalance, accountId", BAD_REQUEST),
+  ACC0007("ACC0007", "Campos obligatorios: id, processDate, movementType, amount, accountId", BAD_REQUEST),
+  ACC0008("ACC0008", "Campos obligatorios: processDate, movementType, amount, accountId", BAD_REQUEST),
   ACC0009("ACC0009", "Movimiento no encontrado", BAD_REQUEST);
 
   private final String code;

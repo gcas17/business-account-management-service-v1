@@ -29,8 +29,8 @@ public class Movement {
   @Column("value")
   private BigDecimal value;
 
-  @Column("balance")
-  private BigDecimal balance;
+  @Column("available_balance")
+  private BigDecimal availableBalance;
 
   @Column("account_id")
   private Long accountId;

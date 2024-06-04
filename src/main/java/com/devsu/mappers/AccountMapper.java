@@ -14,16 +14,16 @@ public interface AccountMapper {
 
   AccountMapper INSTANCE = Mappers.getMapper(AccountMapper.class);
 
-  @Mapping(source = "accountInformation.number", target = "accountNumber")
-  @Mapping(source = "accountInformation.type", target = "accountType")
-  @Mapping(source = "accountInformation.initialBalance", target = "initialBalance")
-  @Mapping(source = "accountInformation.status", target = "status")
+  @Mapping(source = "accountNumber", target = "accountNumber")
+  @Mapping(source = "accountType", target = "accountType")
+  @Mapping(source = "initialBalance", target = "initialBalance")
+  @Mapping(source = "status", target = "status")
   Account createAccountRequestToAccount(CreateAccountRequest createAccountRequest);
 
-  @Mapping(source = "accountNumber", target = "accountInformation.number")
-  @Mapping(source = "accountType", target = "accountInformation.type")
-  @Mapping(source = "initialBalance", target = "accountInformation.initialBalance")
-  @Mapping(source = "status", target = "accountInformation.status")
+  @Mapping(source = "accountNumber", target = "accountNumber")
+  @Mapping(source = "accountType", target = "accountType")
+  @Mapping(source = "initialBalance", target = "initialBalance")
+  @Mapping(source = "status", target = "status")
   AccountResponse accountToAccountResponse(Account account, @Context ClientResponse client);
 
   @AfterMapping
@@ -33,19 +33,18 @@ public interface AccountMapper {
     }
   }
 
-  @Mapping(source = "id", target = "id")
-  @Mapping(source = "accountInformation.number", target = "accountNumber")
-  @Mapping(source = "accountInformation.type", target = "accountType")
-  @Mapping(source = "accountInformation.initialBalance", target = "initialBalance")
-  @Mapping(source = "accountInformation.status", target = "status")
-  Account updateAccountRequestToAccount(UpdateAccountRequest updateAccountRequest);
+  @Mapping(source = "accountNumber", target = "accountNumber")
+  @Mapping(source = "accountType", target = "accountType")
+  @Mapping(source = "initialBalance", target = "initialBalance")
+  @Mapping(source = "status", target = "status")
+  @Mapping(source = "clientId", target = "clientId")
+  void updateAccountRequestToAccount(UpdateAccountRequest updateAccountRequest, @MappingTarget Account existingAccount);
 
-
-  @Mapping(source = "id", target = "id")
-  @Mapping(source = "accountInformation.number", target = "accountNumber")
-  @Mapping(source = "accountInformation.type", target = "accountType")
-  @Mapping(source = "accountInformation.initialBalance", target = "initialBalance")
-  @Mapping(source = "accountInformation.status", target = "status")
+  @Mapping(source = "accountNumber", target = "accountNumber")
+  @Mapping(source = "accountType", target = "accountType")
+  @Mapping(source = "initialBalance", target = "initialBalance")
+  @Mapping(source = "status", target = "status")
+  @Mapping(source = "clientId", target = "clientId")
   Account replaceAccountRequestToAccount(ReplaceAccountRequest replaceAccountRequest);
 
 }
