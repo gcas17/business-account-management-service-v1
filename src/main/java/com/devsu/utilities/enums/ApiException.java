@@ -21,7 +21,8 @@ public enum ApiException {
   ACC0006("ACC0006", "Campos obligatorios: id", BAD_REQUEST),
   ACC0007("ACC0007", "Campos obligatorios: id, processDate, movementType, amount, accountId", BAD_REQUEST),
   ACC0008("ACC0008", "Campos obligatorios: processDate, movementType, amount, accountId", BAD_REQUEST),
-  ACC0009("ACC0009", "Movimiento no encontrado", BAD_REQUEST);
+  ACC0009("ACC0009", "Movimiento no encontrado", BAD_REQUEST),
+  ACC0010("ACC0010", "Saldo insuficiente", BAD_REQUEST);
 
   private final String code;
   private final String description;

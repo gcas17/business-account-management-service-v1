@@ -17,7 +17,7 @@ public interface MovementMapper {
   @Mapping(source = "processDate", target = "date")
   @Mapping(source = "movementType", target = "movementType")
   @Mapping(source = "amount", target = "value")
-  @Mapping(target = "accountId", ignore = true)
+  @Mapping(source = "accountId", target = "accountId")
   Movement createMovementRequestToMovement(CreateMovementRequest createMovementRequest);
 
   @Mapping(source = "id", target = "id")
@@ -45,7 +45,7 @@ public interface MovementMapper {
     if (movement.getMovementType() != null && !movement.getMovementType().isEmpty()) {
       String movementType = movement.getMovementType();
       String capitalizedMovementType = Character.toUpperCase(movementType.charAt(0)) + movementType.substring(1).toLowerCase();
-      return capitalizedMovementType + " de " + movement.getValue();
+      return capitalizedMovementType + " de " + movement.getValue().abs();
     }
     return null;
   }

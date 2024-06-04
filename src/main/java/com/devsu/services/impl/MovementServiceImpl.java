@@ -16,6 +16,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
 
+import java.math.BigDecimal;
 import java.util.function.Predicate;
 
 import static com.devsu.utilities.enums.ApiException.*;
@@ -42,25 +43,30 @@ public class MovementServiceImpl implements MovementService {
         .flatMap(accountMovementPair -> {
           Account account = accountMovementPair.getT1();
           Movement movement = accountMovementPair.getT2();
-          movement.setAccountId(account.getId());
+          return movementRepository.findFirstByAccountIdOrderByIdDesc(account.getId())
+              .flatMap(lastMovement -> {
+                BigDecimal newBalance = lastMovement.getAvailableBalance().add(movement.getValue());
+                if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
+                  return Mono.error(ACC0010.getException());
+                }
+                movement.setAvailableBalance(newBalance);
+                return Mono.just(Tuples.of(account, movement));
+              })
+              .defaultIfEmpty(Tuples.of(account, movement));
+        })
+        .flatMap(accountMovementPair -> {
+          Account account = accountMovementPair.getT1();
+          Movement movement = accountMovementPair.getT2();
+          if (movement.getAvailableBalance() == null) {
+            BigDecimal newBalance = account.getInitialBalance().add(movement.getValue());
+            if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
+              return Mono.error(ACC0010.getException());
+            }
+            movement.setAvailableBalance(newBalance);
+          }
           return movementRepository.save(movement)
               .flatMap(savedMovement -> Mono.just(MovementMapper.INSTANCE.movementToMovementResponse(savedMovement, account)));
         });
-  }
-
-  @Override
-  public Mono<Void> deleteMovement(Long id) {
-    return movementRepository.findById(id)
-        .switchIfEmpty(Mono.defer(() -> Mono.error(ACC0009.getException())))
-        .flatMap(movementRepository::delete);
-  }
-
-  @Override
-  public Mono<MovementResponse> getMovement(Long id) {
-    return movementRepository.findById(id)
-        .flatMap(movement -> accountRepository.findById(movement.getAccountId())
-            .switchIfEmpty(Mono.error(ACC0001.getException()))
-            .map(account -> MovementMapper.INSTANCE.movementToMovementResponse(movement, account)));
   }
 
   @Override
@@ -119,6 +125,20 @@ public class MovementServiceImpl implements MovementService {
             .map(account -> MovementMapper.INSTANCE.movementToMovementResponse(movement, account)));
   }
 
+  @Override
+  public Mono<MovementResponse> getMovement(Long id) {
+    return movementRepository.findById(id)
+        .flatMap(movement -> accountRepository.findById(movement.getAccountId())
+            .switchIfEmpty(Mono.error(ACC0001.getException()))
+            .map(account -> MovementMapper.INSTANCE.movementToMovementResponse(movement, account)));
+  }
+
+  @Override
+  public Mono<Void> deleteMovement(Long id) {
+    return movementRepository.findById(id)
+        .switchIfEmpty(Mono.defer(() -> Mono.error(ACC0009.getException())))
+        .flatMap(movementRepository::delete);
+  }
 
   private Predicate<UpdateMovementRequest> validateUpdateMovementRequest() {
     return updateClientRequest -> updateClientRequest.getId() != null;
